@@ -15,8 +15,7 @@ export class HeroesComponent {
   constructor(private heroService: HeroService) {}
 
   getHeroes(): void {
-    this.heroService.getHeroes()
-      .subscribe(heroes => this.heroes = heroes);
+    this.heroes = this.heroService.getHeroes();
   }
 
   ngOnInit(): void {
@@ -26,14 +25,11 @@ export class HeroesComponent {
   add(name: string): void {
     name = name.trim();
     if (!name) { return; }
-    this.heroService.addHero({ name } as Hero)
-      .subscribe(hero => {
-        this.heroes.push(hero);
-      });
+    this.heroService.addHero({ name } as Hero);
   }
 
   delete(hero: Hero): void {
     this.heroes = this.heroes.filter(h => h !== hero);
-    this.heroService.deleteHero(hero.id).subscribe();
+    this.heroService.deleteHero(hero);
   }
 }
