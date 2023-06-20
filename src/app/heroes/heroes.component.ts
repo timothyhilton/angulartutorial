@@ -10,18 +10,7 @@ import { MessageService } from '../message.service';
   styleUrls: ['./heroes.component.css']
 })
 export class HeroesComponent {
-  heroes: Hero[] = [];
-
-  constructor(private heroService: HeroService) {}
-
-  getHeroes(): void {
-    this.heroService.getHeroes()
-      .subscribe(heroes => this.heroes = heroes);
-  }
-
-  ngOnInit(): void {
-    this.getHeroes();
-  }
+  constructor(public heroService: HeroService) {}
 
   add(name: string): void {
     name = name.trim();
@@ -30,7 +19,6 @@ export class HeroesComponent {
   }
 
   delete(hero: Hero): void {
-    this.heroes = this.heroes.filter(h => h !== hero);
     this.heroService.deleteHero(hero);
   }
 }
