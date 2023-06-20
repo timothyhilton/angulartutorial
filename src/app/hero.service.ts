@@ -75,6 +75,7 @@ export class HeroService {
     for(let i = 0; i < this.heroes.length; i++){
       if(this.heroes[i].id == hero.id){
         this.heroes[i].name = hero.name;
+        this.log(`updated hero, id ${hero.id}`);
         this.updateLocalStorage();
       }
     }
@@ -83,11 +84,13 @@ export class HeroService {
   addHero(hero: Hero): void {
     hero.id = this.heroes[this.heroes.length - 1].id + 1;
     this.heroes.push(hero);
+    this.log(`added hero with id ${hero.id}`);
     this.updateLocalStorage();
   }
 
   deleteHero(hero: Hero): void {
     this.heroes = this.heroes.filter(h => h !== hero);
+    this.log(`deleted hero with id ${hero.id}`);
     this.updateLocalStorage();
   }
 

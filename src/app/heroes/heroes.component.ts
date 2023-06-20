@@ -11,6 +11,7 @@ import { MessageService } from '../message.service';
 })
 export class HeroesComponent {
   constructor(public heroService: HeroService) {}
+  i = 0;
 
   add(name: string): void {
     name = name.trim();
