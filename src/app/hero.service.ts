@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, from } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { Hero } from './hero';
 import { MessageService } from './message.service';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @Injectable({
   providedIn: 'root'
@@ -43,9 +44,11 @@ export class HeroService {
       }
     }
   
-  getHeroes(): Hero[] {
-    this.log("fetched heroes")
-    return this.heroes;
+  getHeroes(): Observable<Hero[]> {
+    return of(this.heroes)
+      .pipe(
+        catchError(this.handleError<Hero[]>('getHeroes', []))
+    );
   }
 
   getHeroesFromHTTP(): Observable<Hero[]> {
@@ -100,7 +103,7 @@ export class HeroService {
     }
     // check each hero and append them to the results if their name matches the search query
     let results = []
-    for(let i = 1; i < this.heroes.length; i++){
+    for(let i = 0; i < this.heroes.length; i++){
       if(this.heroes[i].name.includes(term)){
           results.push(this.heroes[i])
       }
