@@ -14,11 +14,6 @@ export class HeroService {
   private heroesUrl = 'api/heroes';
   heroes: Hero[] = [];
 
-  undefinedHero: Hero = {
-    name: "No hero found",
-    id: -1,
-  };
-
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
@@ -65,7 +60,7 @@ export class HeroService {
     localStorage.setItem("heroes", JSON.stringify(this.heroes));
   } 
 
-  getHero(id: number): Hero {
+  getHero(id: number) {
     for(let i = 0; i < this.heroes.length; i++){ // this could use optimising
       if(this.heroes[i].id == id){
         this.log(`fetched hero with id ${id}`);
@@ -73,7 +68,7 @@ export class HeroService {
       }
     }
     this.log(`no hero with id ${id}`)
-    return this.undefinedHero;
+    return;
   }
 
   updateHero(hero: Hero): void { // this could also use optimising
