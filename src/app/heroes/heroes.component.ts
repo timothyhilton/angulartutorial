@@ -10,30 +10,16 @@ import { MessageService } from '../message.service';
   styleUrls: ['./heroes.component.css']
 })
 export class HeroesComponent {
-  heroes: Hero[] = [];
-
-  constructor(private heroService: HeroService) {}
-
-  getHeroes(): void {
-    this.heroService.getHeroes()
-      .subscribe(heroes => this.heroes = heroes);
-  }
-
-  ngOnInit(): void {
-    this.getHeroes();
-  }
+  constructor(public heroService: HeroService) {}
+  i = 0;
 
   add(name: string): void {
     name = name.trim();
     if (!name) { return; }
-    this.heroService.addHero({ name } as Hero)
-      .subscribe(hero => {
-        this.heroes.push(hero);
-      });
+    this.heroService.addHero({ name } as Hero);
   }
 
   delete(hero: Hero): void {
-    this.heroes = this.heroes.filter(h => h !== hero);
-    this.heroService.deleteHero(hero.id).subscribe();
+    this.heroService.deleteHero(hero);
   }
 }

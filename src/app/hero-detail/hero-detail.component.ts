@@ -21,8 +21,7 @@ export class HeroDetailComponent {
   
   getHero(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.heroService.getHero(id)
-      .subscribe(hero => this.hero = hero);
+    this.hero = this.heroService.getHero(id);
   }  
 
   ngOnInit(): void {
@@ -35,8 +34,8 @@ export class HeroDetailComponent {
 
   save(): void {
     if(this.hero){
-      this.heroService.updateHero(this.hero)
-        .subscribe(() => this.goBack());
+      this.heroService.updateHero(this.hero);
+      this.goBack();
     }
   }
 }
