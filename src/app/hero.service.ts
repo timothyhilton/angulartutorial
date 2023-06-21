@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, from } from 'rxjs';
+import { Observable, of, from, BehaviorSubject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 
@@ -13,6 +13,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 export class HeroService {
   private heroesUrl = 'api/heroes';
   heroes: Hero[] = [];
+
+  heroSubject = new BehaviorSubject<Hero[]>(this.heroes);
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -33,17 +35,15 @@ export class HeroService {
           .subscribe( // not sure what the depreciation is?
             heroes => {this.heroes = heroes},
             err => {this.log(err)},
-            () => {localStorage.setItem("heroes", JSON.stringify(this.heroes))} // saves hero array to localStorage once observable has resolved
+            () => {localStorage.setItem("heroes", JSON.stringify(this.heroes)); this.heroSubject.next(this.heroes)} // saves hero array to localStorage once observable has resolved
             );
         this.log("saved heroes to LS");
       }
+      this.heroSubject.next(this.heroes);
     }
   
-  getHeroes(): Observable<Hero[]> {
-    return of(this.heroes)
-      .pipe(
-        catchError(this.handleError<Hero[]>('getHeroes', []))
-    );
+  getHeroes(): BehaviorSubject<Hero[]> {
+    return this.heroSubject;
   }
 
   getHeroesFromHTTP(): Observable<Hero[]> {
@@ -58,6 +58,7 @@ export class HeroService {
 
   updateLocalStorage(): void {
     localStorage.setItem("heroes", JSON.stringify(this.heroes));
+    this.heroSubject.next(this.heroes);
   } 
 
   getHero(id: number) {
