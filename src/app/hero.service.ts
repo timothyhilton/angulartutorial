@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, from } from 'rxjs';
+import { Observable, of, from, BehaviorSubject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 
@@ -14,6 +14,8 @@ export class HeroService {
   private heroesUrl = 'api/heroes';
   heroes: Hero[] = [];
 
+  heroSubject = new BehaviorSubject<Hero[]>(this.heroes);
+
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
@@ -25,7 +27,8 @@ export class HeroService {
       // check for heroes from last session
       if(localStorage.getItem('heroes') != null) {
         this.heroes = JSON.parse(localStorage.getItem('heroes') || '{}');
-        this.log("got heroes from LS")
+        this.log("got heroes from LS");
+        this.syncHeroes();
       }
       else {
         this.log("no past heroes");
@@ -33,17 +36,14 @@ export class HeroService {
           .subscribe( // not sure what the depreciation is?
             heroes => {this.heroes = heroes},
             err => {this.log(err)},
-            () => {localStorage.setItem("heroes", JSON.stringify(this.heroes))} // saves hero array to localStorage once observable has resolved
+            () => {this.syncHeroes()} // saves hero array to localStorage once observable has resolved
             );
         this.log("saved heroes to LS");
       }
     }
   
-  getHeroes(): Observable<Hero[]> {
-    return of(this.heroes)
-      .pipe(
-        catchError(this.handleError<Hero[]>('getHeroes', []))
-    );
+  getHeroes(): BehaviorSubject<Hero[]> {
+    return this.heroSubject;
   }
 
   getHeroesFromHTTP(): Observable<Hero[]> {
@@ -56,8 +56,10 @@ export class HeroService {
       );
   }
 
-  updateLocalStorage(): void {
+  syncHeroes(): void {
     localStorage.setItem("heroes", JSON.stringify(this.heroes));
+    this.heroSubject.next(this.heroes);
+    this.log("synced heroes");
   } 
 
   getHero(id: number) {
@@ -76,7 +78,7 @@ export class HeroService {
       if(this.heroes[i].id == hero.id){
         this.heroes[i].name = hero.name;
         this.log(`updated hero, id ${hero.id}`);
-        this.updateLocalStorage();
+        this.syncHeroes();
       }
     }
   }
@@ -85,13 +87,13 @@ export class HeroService {
     hero.id = this.heroes[this.heroes.length - 1].id + 1;
     this.heroes.push(hero);
     this.log(`added hero with id ${hero.id}`);
-    this.updateLocalStorage();
+    this.syncHeroes();
   }
 
   deleteHero(hero: Hero): void {
     this.heroes = this.heroes.filter(h => h !== hero);
     this.log(`deleted hero with id ${hero.id}`);
-    this.updateLocalStorage();
+    this.syncHeroes();
   }
 
   searchHeroes(term: string): Observable<Hero[]> {
