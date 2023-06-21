@@ -7,13 +7,6 @@ import { HeroService } from './hero.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'Tour of Heroes';
-  heroes: Hero[] = [];
-  constructor(private heroService: HeroService) {}
-
-  ngOnInit(): void{
-    this.heroService.getHeroes()
-      .subscribe(heroes => this.heroes = heroes);
-  }
 }
