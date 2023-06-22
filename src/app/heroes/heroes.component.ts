@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Hero } from '../hero';
@@ -10,11 +11,14 @@ import { MessageService } from '../message.service';
   styleUrls: ['./heroes.component.css']
 })
 export class HeroesComponent implements OnInit {
-  constructor(private heroService: HeroService) {}
-  heroes: Hero[] = [];
-  i = 0;
+  constructor(
+    private heroService: HeroService, 
+    private messageService: MessageService,
+    private http: HttpClient) {}
 
-  ngOnInit(): void{
+  heroes: Hero[] = [];
+  
+  ngOnInit(): void {
     this.heroService.getHeroes()
       .subscribe(heroes => this.heroes = heroes);
   }
@@ -22,7 +26,7 @@ export class HeroesComponent implements OnInit {
   add(name: string): void {
     name = name.trim();
     if (!name) { return; }
-    this.heroService.addHero({ name } as Hero);
+    this.heroService.addHero({name} as Hero);
   }
 
   delete(hero: Hero): void {

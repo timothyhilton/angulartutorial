@@ -21,7 +21,8 @@ export class HeroDetailComponent {
   
   getHero(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.hero = this.heroService.getHero(id);
+    this.heroService.getHero(id)
+      .subscribe(hero => this.hero = hero);
   }  
 
   ngOnInit(): void {
